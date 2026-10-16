@@ -4,10 +4,8 @@ import com.github.mh321Productions.handball4AllApi.api.data.RawData
 import com.github.mh321Productions.handball4AllApi.api.data.serializers.BoolAsIntSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonPrimitive
 
 @Serializable
 data class LeagueInfoHead(
