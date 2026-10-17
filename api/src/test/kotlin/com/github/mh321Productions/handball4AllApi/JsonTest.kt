@@ -1,7 +1,6 @@
 package com.github.mh321Productions.handball4AllApi
 
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

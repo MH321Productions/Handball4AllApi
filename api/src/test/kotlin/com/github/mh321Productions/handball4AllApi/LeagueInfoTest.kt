@@ -4,6 +4,7 @@ import com.github.mh321Productions.handball4AllApi.api.Handball4All
 import com.github.mh321Productions.handball4AllApi.api.data.exceptions.H4AllException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -16,9 +17,7 @@ class LeagueInfoTest {
 
         runBlocking {
             val result = Handball4All.getLeagueInfo(org, leagueId)
-            assertTrue(result.isSuccess)
-
-            val league = result.getOrThrow()
+            val league = assertDoesNotThrow { result.getOrThrow() }
 
             assertEquals("Männer Bezirksliga", league.head.name)
             assertEquals("M-BL-RN", league.head.shortName)
