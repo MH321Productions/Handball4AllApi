@@ -19,7 +19,7 @@ enum class RefereeAllocation {
     @SerialName("org_assigned") OrgAssigned
 }
 
-data class Gymnasium(val id: String, val number: String, val name: String, val postal: String, val town: String, val street: String)
+data class Gymnasium(val id: Int, val number: Int, val name: String, val postal: String, val town: String, val street: String)
 
 data class Game(
     val id: Int, val gameId: Int?, val publicNumber: Int, val live: Boolean,
@@ -67,7 +67,7 @@ data class RawGame(
     val gComment: String, val gGroupsortTxt: String, val gReferee: String, val robotextstate: GameRoboTextState
 ) : RawData<Game> {
     override fun getData(): Game {
-        val gym = Gymnasium(gGymnasiumID, gGymnasiumNo, gGymnasiumName, gGymnasiumPostal, gGymnasiumTown, gGymnasiumStreet)
+        val gym = Gymnasium(gGymnasiumID.toInt(), gGymnasiumNo.toInt(), gGymnasiumName, gGymnasiumPostal, gGymnasiumTown, gGymnasiumStreet)
 
         val dateSplit = gDate.split(".") //The date format is DD.MM.YY
         val day = dateSplit[0].toInt()

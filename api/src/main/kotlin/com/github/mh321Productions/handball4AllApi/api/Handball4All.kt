@@ -1,13 +1,10 @@
 package com.github.mh321Productions.handball4AllApi.api
 
-import com.github.mh321Productions.handball4AllApi.api.data.RawData
 import com.github.mh321Productions.handball4AllApi.api.data.H4AllResponse
-import com.github.mh321Productions.handball4AllApi.api.data.ResponseMenu
-import com.github.mh321Productions.handball4AllApi.api.data.endpoints.GameList
-import com.github.mh321Productions.handball4AllApi.api.data.endpoints.LeagueInfoContent
-import com.github.mh321Productions.handball4AllApi.api.data.endpoints.LeagueInfoHead
-import com.github.mh321Productions.handball4AllApi.api.data.endpoints.RawLeagueInfoContent
-import com.github.mh321Productions.handball4AllApi.api.data.endpoints.TeamInfo
+import com.github.mh321Productions.handball4AllApi.api.data.RawH4AllResponse
+import com.github.mh321Productions.handball4AllApi.api.data.RawData
+import com.github.mh321Productions.handball4AllApi.api.data.RawResponseMenu
+import com.github.mh321Productions.handball4AllApi.api.data.endpoints.*
 import com.github.mh321Productions.handball4AllApi.api.data.exceptions.H4AllException
 import kotlinx.coroutines.future.await
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -35,7 +32,7 @@ object Handball4All {
      *
      * This query allows to show all games during the season.
      *
-     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [ResponseMenu.org], e.g. `216` for the BWHV)
+     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [RawResponseMenu.org], e.g. `216` for the BWHV)
      * @param leagueId The league id (The `lId` parameter in the Browser url or [GameList.leagueId])
      * @param showAllGames Whether to query all games in the season (they are then all listed under [LeagueInfoContent.futureGames])
      */
@@ -47,9 +44,9 @@ object Handball4All {
      *
      * This query allows to specify a week to show all games from.
      *
-     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [ResponseMenu.org], e.g. `216` for the BWHV)
+     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [RawResponseMenu.org], e.g. `216` for the BWHV)
      * @param leagueId The league id (The `lId` parameter in the Browser url or [GameList.leagueId])
-     * @param date The week to query (the week's monday as `YYYY-MM-DD`, see [ResponseMenu.dates] for possible values), or `null` for the current week
+     * @param date The week to query (the week's monday as `YYYY-MM-DD`, see [RawResponseMenu.dates] for possible values), or `null` for the current week
      */
     suspend fun getLeagueInfo(organization: Int, leagueId: Int, date: String?) = getLeagueInfo(organization, leagueId, null, date, false)
 
@@ -59,15 +56,62 @@ object Handball4All {
      *
      * This query shows all games for a specified team under [LeagueInfoContent.futureGames].
      *
-     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [ResponseMenu.org], e.g. `216` for the BWHV)
+     * @param organization The organization hosting the league (The `ogId` parameter in the Browser url or [RawResponseMenu.org], e.g. `216` for the BWHV)
      * @param leagueId The league id (The `lId` parameter in the Browser url or [GameList.leagueId])
      * @param teamId The team id (The `tId` parameter in the Browser url or [TeamInfo.teamId])
      */
     suspend fun getLeagueInfo(organization: Int, leagueId: Int, teamId: Int) = getLeagueInfo(organization, leagueId, teamId, null, false)
 
+    /**
+     * Queries information about a gymnasium (name, address, wax regulations, accessibility information, etc.)
+     *
+     * @param organization The organization responsible for the gymnasium (The `ogId` parameter in the Browser url or [RawResponseMenu.org], e.g. `216` for the BWHV)
+     * @param gymId The gymnasium id (The `gId` parameter in the Browser or [Gymnasium.id])
+     */
+    @OptIn(ExperimentalSerializationApi::class)
+    suspend fun getGymnasiumInfo(organization: Int, gymId: Int): Result<H4AllGymnasiumResponse> {
+        val query = mapOf(
+            "cmd" to "gi",
+            "og" to organization.toString(),
+            "g" to gymId.toString()
+        )
+        val request = HttpRequest.newBuilder(buildUri(query)).GET().build()
+        val response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).await()
+
+        try {
+            val rawData = json.decodeFromString<List<H4AllRawGymnasiumResponse>>(response.body()).first()
+            rawData.gymnasiumInfo.queryOrg = organization
+            rawData.gymnasiumInfo.queryGymnasium = gymId
+            return Result.success(rawData.getData())
+        } catch (jsonException: JsonDecodingException) {
+            val exception = try {
+                json.decodeFromString<H4AllException>(response.body())
+            } catch (_: JsonEncodingException) {
+                jsonException
+            }
+
+            return Result.failure(exception)
+        } catch (otherEx: Exception) {
+            return Result.failure(otherEx)
+        }
+    }
+
+    /**
+     * Queries the game plan of a gymnasium
+     *
+     * @param organization The organization responsible for the gymnasium (The `ogId` parameter in the Browser url or [RawResponseMenu.org], e.g. `216` for the BWHV)
+     * @param gymId The gymnasium id (The `gId` parameter in the Browser or [Gymnasium.id])
+     * @param date The week to query (the week's monday as `YYYY-MM-DD`, see [RawResponseMenu.dates] for possible values), or `null` for the current week
+     */
+    suspend fun getGymnasiumPlan(organization: Int, gymId: Int, date: String? = null) = runRequest<GymPlanContent, RawGymPlanContent>(buildMap {
+        put("cmd", "pgy")
+        put("og", organization.toString())
+        put("g", gymId.toString())
+        if (date != null) { put("do", date) }
+    })
 
     private suspend fun getLeagueInfo(organization: Int, leagueId: Int, teamId: Int? = null, date: String? = null, showAllGames: Boolean = false)
-    = runRequest<LeagueInfoHead, LeagueInfoContent, LeagueInfoHead, RawLeagueInfoContent>(
+    = runRequest<LeagueInfoContent, RawLeagueInfoContent>(
         buildMap {
             put("cmd", "ps")
             put("og", organization.toString())
@@ -79,13 +123,13 @@ object Handball4All {
     )
 
     @OptIn(ExperimentalSerializationApi::class)
-    private suspend inline fun <THead, TContent, reified TRawHead : RawData<THead>, reified TRawContent : RawData<TContent>> runRequest(query: Map<String, String>): Result<H4AllResponse<THead, TContent>> {
+    private suspend inline fun <TContent, reified TRawContent : RawData<TContent>> runRequest(query: Map<String, String>): Result<H4AllResponse<TContent>> {
         val request = HttpRequest.newBuilder(buildUri(query)).GET().build()
         val response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).await()
 
         try {
-            val rawData = json.decodeFromString<List<H4AllResponse<TRawHead, TRawContent>>>(response.body()).first()
-            val highLevelData = H4AllResponse(rawData.header, rawData.menu, rawData.head.getData(), rawData.content.getData(), rawData.footer, rawData.error, rawData.debug)
+            val rawData = json.decodeFromString<List<RawH4AllResponse<TRawContent>>>(response.body()).first()
+            val highLevelData = H4AllResponse(rawData.header, rawData.menu.getData(), rawData.head, rawData.content.getData(), rawData.footer, rawData.error, rawData.debug)
             return Result.success(highLevelData)
         } catch (jsonException: JsonDecodingException) {
             val exception = try {

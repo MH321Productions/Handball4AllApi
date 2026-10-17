@@ -1,21 +1,10 @@
 package com.github.mh321Productions.handball4AllApi.api.data.endpoints
 
 import com.github.mh321Productions.handball4AllApi.api.data.RawData
-import com.github.mh321Productions.handball4AllApi.api.data.serializers.BoolAsIntSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.intOrNull
-
-@Serializable
-data class LeagueInfoHead(
-    val name: String, @SerialName("sname") val shortName: String,
-    val headline1: String, val headline2: String,
-    val actualized: String, @Serializable(BoolAsIntSerializer::class) val live: Boolean,
-    @SerialName("repURL") val reportUrl: String, val scoreShowDataPerGame: Boolean
-) : RawData<LeagueInfoHead> {
-    override fun getData() = this
-}
 
 data class LeagueInfoContent(
     val actualGames: GameList, val futureGames: GameList,
