@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.MH321Productions.Handball4AllApi"
-version = "0.0.1-SNAPSHOT"
+version = "1.0.0"
 
 dependencies {
     implementation(libs.bundles.kotlinxEcosystem)
