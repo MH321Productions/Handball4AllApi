@@ -10,13 +10,15 @@ import kotlinx.serialization.json.JsonPrimitive
 @Serializable
 enum class GameRoboTextState {
     @SerialName("unseen") Unseen,
-    @SerialName("generated") Generated
+    @SerialName("generated") Generated,
+    @SerialName("error") Error
 }
 
 @Serializable
 enum class RefereeAllocation {
     @SerialName("not_defined") NotDefined,
-    @SerialName("org_assigned") OrgAssigned
+    @SerialName("org_assigned") OrgAssigned,
+    @SerialName("no_referee") NoReferee
 }
 
 data class Gymnasium(val id: Int, val number: Int, val name: String, val postal: String, val town: String, val street: String)
