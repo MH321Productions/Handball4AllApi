@@ -18,6 +18,7 @@
           "teams": {
             "description": "The Teams to include in the calendar",
             "type": "array",
+            "minItems": 1,
             "items": {
               "description": "The Handball4All Team Info",
               "type": "object",
@@ -33,6 +34,14 @@
                 "teamId": {
                   "description": "The Team ID",
                   "type": "integer"
+                },
+                "prefix": {
+                  "description": "A prefix to the game title (optional)",
+                  "type": "string"
+                },
+                "suffix" : {
+                  "description": "A suffix to the game title (optional)",
+                  "type": "string"
                 }
               },
               "required": ["leagueId", "orgId", "teamId"]
