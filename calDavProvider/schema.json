@@ -1,4 +1,47 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": ""
+  "$id": "https://raw.githubusercontent.com/MH321Productions/Handball4AllApi/main/calDavProvider/schema.json",
+  "title": "H4All CalDav Provider",
+  "type": "object",
+  "properties": {
+    "calendars": {
+      "description": "The calendar list",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "The calendar creation info",
+        "properties": {
+          "name": {
+            "description": "The calendar name",
+            "type": "string"
+          },
+          "teams": {
+            "description": "The Teams to include in the calendar",
+            "type": "array",
+            "items": {
+              "description": "The Handball4All Team Info",
+              "type": "object",
+              "properties": {
+                "orgId": {
+                  "description": "The Organisation ID",
+                  "type": "integer"
+                },
+                "leagueId": {
+                  "description": "The League ID",
+                  "type": "integer"
+                },
+                "teamId": {
+                  "description": "The Team ID",
+                  "type": "integer"
+                }
+              },
+              "required": ["leagueId", "orgId", "teamId"]
+            }
+          }
+        },
+        "required": ["name", "teams"]
+      }
+    },
+    "required": ["calendars"]
+  }
 }
