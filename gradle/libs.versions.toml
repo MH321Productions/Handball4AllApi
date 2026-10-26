@@ -8,14 +8,15 @@ kotlinxDatetime = "0.8.0"
 kotlinxSerializationJSON = "1.11.0"
 kotlinxCoroutines = "1.10.2"
 ktor = "3.6.0"
-iCalDAV = "2.3.1"
+iCalDAV = "3.2.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJSON" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-iCalDAV-client = { module = "org.onekash:icaldav-client", version.ref = "iCalDAV"}
+iCalDAV-client = { module = "org.onekash:icaldav-client", version.ref = "iCalDAV" }
+slf4j-jdk14 = { module = "org.slf4j:slf4j-jdk14", version = "2.0.20" }
 
 # Libraries can be bundled together for easier import
 [bundles]
