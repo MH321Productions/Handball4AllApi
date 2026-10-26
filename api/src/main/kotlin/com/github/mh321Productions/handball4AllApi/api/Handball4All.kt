@@ -187,6 +187,8 @@ object Handball4All {
         val request = HttpRequest.newBuilder(buildUri(query)).GET().build()
         val response = client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).await()
 
+        if (response.statusCode() != 200) throw IOException("Unexpected status code: ${response.statusCode()}")
+
         try {
             val rawData = json.decodeFromString<List<RawH4AllResponse<TRawContent>>>(response.body()).first()
             val highLevelData = H4AllResponse(rawData.header, rawData.menu.getData(), rawData.head, rawData.content.getData(), rawData.footer, rawData.error, rawData.debug)
