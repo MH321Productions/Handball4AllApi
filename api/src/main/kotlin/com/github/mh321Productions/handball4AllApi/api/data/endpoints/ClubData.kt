@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class ClubData(val teams: List<ClubTeamInfo>)
 
 data class ClubTeamInfo(
-    val teamId: Int, val name: String, val shortName: String,
+    val leagueId: Int, val name: String, val shortName: String,
     val ageGroup: AgeGroup, val refereeAllocation: RefereeAllocation, val refereeResponsibleOrg: Int?,
     val games: List<Game>
 )

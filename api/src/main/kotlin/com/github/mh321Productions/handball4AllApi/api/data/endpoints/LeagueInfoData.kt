@@ -3,11 +3,14 @@ package com.github.mh321Productions.handball4AllApi.api.data.endpoints
 import com.github.mh321Productions.handball4AllApi.api.data.RawData
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.intOrNull
 
 data class LeagueInfoContent(
-    val actualGames: GameList, val futureGames: GameList,
+    val actualGames: GameList?, val futureGames: GameList,
     val score: List<LeagueScore>, val scoreComments: List<String>, val scoreInfos: List<String>,
     val teamsList: List<TeamInfo>, val scoreShowDataPerGame: Boolean
 )
@@ -21,12 +24,12 @@ data class LeagueScore(
     val posCriterion: String
 )
 
-data class TeamInfo(val sort: Int, val teamId: Int, val teamName: String)
+data class TeamInfo(val sort: Int?, val teamId: Int, val teamName: String)
 
 @Serializable
-data class RawTeamInfo(val sort: String, @SerialName("teamID") val teamId: String, val teamName: String) : RawData<TeamInfo> {
+data class RawTeamInfo(val sort: String?, @SerialName("teamID") val teamId: String, val teamName: String) : RawData<TeamInfo> {
 
-    override fun getData() = TeamInfo(sort.toInt(), teamId.toInt(), teamName)
+    override fun getData() = TeamInfo(sort?.toInt(), teamId.toInt(), teamName)
 }
 
 @Serializable
@@ -48,12 +51,12 @@ data class RawLeagueScore(
 
 @Serializable
 data class RawLeagueInfoContent(
-    val actualGames: RawGameList, val futureGames: RawGameList,
+    val actualGames: JsonElement, val futureGames: RawGameList,
     val score: List<RawLeagueScore>, val scoreComments: List<String>, val scoreInfos: List<JsonPrimitive>,
     val teamsList: List<RawTeamInfo>, val scoreShowDataPerGame: Boolean
 ) : RawData<LeagueInfoContent> {
     override fun getData() = LeagueInfoContent(
-        actualGames.getData(), futureGames.getData(),
+        if (actualGames is JsonObject) Json.decodeFromJsonElement(RawGameList.serializer(), actualGames).getData() else null, futureGames.getData(),
         score.map { it.getData() }, scoreComments, scoreInfos.map { it.content },
         teamsList.map { it.getData() }, scoreShowDataPerGame
     )

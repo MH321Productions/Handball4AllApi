@@ -18,7 +18,8 @@ enum class GameRoboTextState {
 enum class RefereeAllocation {
     @SerialName("not_defined") NotDefined,
     @SerialName("org_assigned") OrgAssigned,
-    @SerialName("no_referee") NoReferee
+    @SerialName("no_referee") NoReferee,
+    @SerialName("org_of_class") OrgOfClass
 }
 
 data class Gymnasium(val id: Int, val number: Int, val name: String, val postal: String, val town: String, val street: String)
@@ -26,7 +27,7 @@ data class Gymnasium(val id: Int, val number: Int, val name: String, val postal:
 data class Game(
     val id: Int, val gameId: Int?, val publicNumber: Int, val live: Boolean,
     val token: String, val appId: String,
-    val date: LocalDateTime, val gymnasium: Gymnasium,
+    val date: LocalDateTime, val gymnasium: Gymnasium?,
     val homeTeam: String, val guestTeam: String,
     val homeGoals: Int?, val guestGoals: Int?, val homeGoals1: Int?, val guestGoals1: Int?, val homePoints: Int?, val guestPoints: Int?,
     val comment: String, val groupSortText: String, val referee: String, val roboTextState: GameRoboTextState
@@ -61,7 +62,7 @@ data class RawGame(
     val gID: String, val sGID: JsonPrimitive, val gNo: String, val live: Boolean,
     val gToken: String, val gAppid: String,
     val gDate: String, val gWDay: String, val gTime: String,
-    val gGymnasiumID: String, val gGymnasiumNo: String, val gGymnasiumName: String, val gGymnasiumPostal: String, val gGymnasiumTown: String, val gGymnasiumStreet: String,
+    val gGymnasiumID: String?, val gGymnasiumNo: String?, val gGymnasiumName: String?, val gGymnasiumPostal: String?, val gGymnasiumTown: String?, val gGymnasiumStreet: String?,
     val gHomeTeam: String, val gGuestTeam: String,
     val gHomeGoals: String, val gGuestGoals: String,
     @SerialName("gHomeGoals_1") val gHomeGoals1: String, @SerialName("gGuestGoals_1") val gGuestGoals1: String,
@@ -69,14 +70,18 @@ data class RawGame(
     val gComment: String, val gGroupsortTxt: String, val gReferee: String, val robotextstate: GameRoboTextState
 ) : RawData<Game> {
     override fun getData(): Game {
-        val gym = Gymnasium(gGymnasiumID.toInt(), gGymnasiumNo.toInt(), gGymnasiumName, gGymnasiumPostal, gGymnasiumTown, gGymnasiumStreet)
+        val gym =
+            if (gGymnasiumID != null && gGymnasiumNo != null && gGymnasiumName != null && gGymnasiumPostal != null && gGymnasiumTown != null && gGymnasiumStreet != null)
+                Gymnasium(gGymnasiumID.toInt(), gGymnasiumNo.toInt(), gGymnasiumName, gGymnasiumPostal, gGymnasiumTown, gGymnasiumStreet)
+            else
+                null
 
         val dateSplit = gDate.split(".") //The date format is DD.MM.YY
         val day = dateSplit[0].toInt()
         val month = dateSplit[1].toInt()
         val year = dateSplit[2].toInt() + 2000
 
-        val timeSplit = gTime.split(":")
+        val timeSplit = gTime.ifBlank { "00:00" }.split(":")
         val hours = timeSplit[0].toInt()
         val minutes = timeSplit[1].toInt()
 
