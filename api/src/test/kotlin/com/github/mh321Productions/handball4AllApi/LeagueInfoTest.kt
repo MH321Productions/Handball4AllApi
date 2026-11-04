@@ -1,12 +1,13 @@
 package com.github.mh321Productions.handball4AllApi
 
 import com.github.mh321Productions.handball4AllApi.api.Handball4All
-import com.github.mh321Productions.handball4AllApi.api.data.exceptions.H4AllException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.io.IOException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFailsWith
 
 class LeagueInfoTest {
 
@@ -31,10 +32,9 @@ class LeagueInfoTest {
 
         runBlocking {
             val result = Handball4All.getLeagueInfo(org, leagueId)
-            assertTrue(result.isFailure)
+            val err = assertFailsWith<IOException> { result.getOrThrow() }
 
-            val exception = result.exceptionOrNull()
-            assertTrue(exception is H4AllException)
+            assertContains(err.message ?: "", "401")
         }
     }
 }

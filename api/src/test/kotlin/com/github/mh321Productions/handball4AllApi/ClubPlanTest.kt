@@ -2,11 +2,11 @@ package com.github.mh321Productions.handball4AllApi
 
 import com.github.mh321Productions.handball4AllApi.api.Handball4All
 import com.github.mh321Productions.handball4AllApi.api.data.endpoints.Gender
-import com.github.mh321Productions.handball4AllApi.api.data.exceptions.H4AllException
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
-import kotlin.test.assertEquals
+import java.io.IOException
+import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -32,9 +32,9 @@ class ClubPlanTest {
 
         runBlocking {
             val result = Handball4All.getClubPlan(org, clubId)
-            val err = assertFailsWith<H4AllException> { result.getOrThrow() }
+            val err = assertFailsWith<IOException> { result.getOrThrow() }
 
-            assertEquals(-1, err.status)
+            assertContains(err.message ?: "", "401")
         }
     }
 }
