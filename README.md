@@ -13,3 +13,10 @@ Huge thanks to [@PerDaw](https://github.com/PerDaw) for providing the specificat
 > This is primarily designed for the [BWHV](https://bwhv.org),
 > as they switched back from Handball360 to Handball4All. As soon as they fully implement Handball360, this repo
 > will become obsolete.
+
+# Utility Apps
+
+## CalDAV Provider
+
+This feeds the H4All data into a user-specified CalDAV server.
+See [its folder](calDavProvider) or [its Docker page](https://hub.docker.com/r/321productions/h4a-caldav) for more details.
