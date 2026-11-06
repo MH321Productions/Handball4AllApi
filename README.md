@@ -1,5 +1,8 @@
 # Handball4AllApi
 
+[![Docker Image Version](https://img.shields.io/docker/v/321productions/h4a-caldav?label=Docker%20image)
+](https://hub.docker.com/r/321productions/h4a-caldav)
+
 This repo contains an implementation of the [Handball4All](https://handball4all.de) API (see the [api](api) folder),
 as well as several utility apps, all written in Kotlin.
 
