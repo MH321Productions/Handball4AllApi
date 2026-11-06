@@ -13,7 +13,7 @@ import kotlin.time.Duration.Companion.hours
 
 data class CalendarInfo(val name: String, val games: List<ICalEvent>) {
     companion object {
-        suspend fun create(info: CalendarCreationInfo): CalendarInfo {
+        suspend fun create(info: CalendarCreationInfo, prefixes: List<String>): CalendarInfo {
             println("Querying ${info.teams.size} team(s) for the \"${info.name}\" calendar")
             val games = info.teams
                 .flatMap { team ->
@@ -22,7 +22,7 @@ data class CalendarInfo(val name: String, val games: List<ICalEvent>) {
                     randomDelay()
                     list.zip(List(list.size) { team })
                 }
-                .filter { it.first.homeTeam.startsWith(Env.clubPrefix) || it.first.guestTeam.startsWith(Env.clubPrefix) }
+                .filter { (game, _) -> prefixes.any { game.homeTeam.startsWith(it) || game.guestTeam.startsWith(it) } }
                 .sortedBy { it.first.date }
 
             val durations = games

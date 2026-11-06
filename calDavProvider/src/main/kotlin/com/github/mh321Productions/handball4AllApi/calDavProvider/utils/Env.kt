@@ -10,8 +10,8 @@ object Env {
     val password: String
         get() = getString("H4A_CAL_PASSWORD")
 
-    val clubPrefix: String
-        get() = getString("H4A_CLUB_PREFIX")
+    val teamsFile: String
+        get() = getString("H4A_TEAMS_FILE")
 
     private fun getString(name: String) = System.getenv(name) ?: throw NullPointerException("$name is not set")
 }

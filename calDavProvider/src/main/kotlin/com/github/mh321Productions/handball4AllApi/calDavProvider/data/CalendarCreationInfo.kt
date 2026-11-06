@@ -3,7 +3,7 @@ package com.github.mh321Productions.handball4AllApi.calDavProvider.data
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CalendarCreationOverview(val calendars: List<CalendarCreationInfo>)
+data class CalendarCreationOverview(val calendars: List<CalendarCreationInfo>, val prefixes: List<String> = listOf(""))
 
 @Serializable
 data class CalendarCreationInfo(val name: String, val teams: List<CalendarTeam>)
