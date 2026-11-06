@@ -17,6 +17,7 @@ kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 iCalDAV-client = { module = "org.onekash:icaldav-client", version.ref = "iCalDAV" }
 slf4j-jdk14 = { module = "org.slf4j:slf4j-jdk14", version = "2.0.20" }
+dnsjava = { module = "dnsjava:dnsjava", version = "3.6.0" }
 
 # Libraries can be bundled together for easier import
 [bundles]

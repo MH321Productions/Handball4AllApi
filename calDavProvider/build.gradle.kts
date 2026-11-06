@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.iCalDAV.client)
     implementation(libs.bundles.kotlinxEcosystem)
     implementation(libs.slf4j.jdk14)
+    runtimeOnly(libs.dnsjava) //Manually specify newer version of dnsjava to protect against vulnerabilities
 }
 
 application {
