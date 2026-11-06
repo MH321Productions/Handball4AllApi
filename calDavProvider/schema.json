@@ -50,6 +50,14 @@
         },
         "required": ["name", "teams"]
       }
+    },
+    "prefixes": {
+      "description": "The accepted prefixes for the H4All Teams (the short names in the league games)",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": ["calendars"]
