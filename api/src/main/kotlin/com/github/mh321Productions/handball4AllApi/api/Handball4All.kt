@@ -162,6 +162,23 @@ object Handball4All {
     suspend fun downloadGameReport(game: Game) = downloadGameReport(game.gameId ?: throw NoGameReportException(game))
 
     /**
+     * Construct the URL for accessing the game report
+     *
+     * @param gameId The game's GID (see [Game.gameId])
+     * @return The report url as a [URL]
+     */
+    fun getGameReportUrl(gameId: Int): URL = buildUri(mapOf("sGID" to gameId.toString()), REPORT_BASE_URL).toURL()
+
+    /**
+     * Construct the URL for accessing the game report
+     *
+     * @param game The game instance
+     * @return The report url as a [URL]
+     * @throws NoGameReportException When the game doesn't have a report (yet)
+     */
+    fun getGameReportUrl(game: Game) = getGameReportUrl(game.gameId ?: throw NoGameReportException(game))
+
+    /**
      * Construct the URL for accessing the live ticker of a game
      *
      * @param game The game instance
