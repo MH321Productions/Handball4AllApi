@@ -50,7 +50,7 @@
         },
         "required": ["name", "teams"]
       }
-    },
-    "required": ["calendars"]
-  }
+    }
+  },
+  "required": ["calendars"]
 }
