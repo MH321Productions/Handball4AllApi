@@ -1,6 +1,8 @@
 package com.github.mh321Productions.handball4AllApi.calDavProvider.utils
 
+import com.github.mh321Productions.handball4AllApi.api.Handball4All
 import com.github.mh321Productions.handball4AllApi.api.data.endpoints.Game
+import com.github.mh321Productions.handball4AllApi.api.data.endpoints.GameRoboTextState
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.onekash.icaldav.model.*
@@ -43,6 +45,34 @@ fun Game.toICalEvent(duration: Duration = 1.hours, prefix: String, suffix: Strin
     if (referee.isNotBlank()) description.append("Referee: $referee\n")
     if (comment.isNotBlank()) description.append("Comment: $comment\n")
 
+    val links = mutableListOf<ICalLink>()
+    if (gameId != null && roboTextState == GameRoboTextState.Generated) {
+        links.add(
+            ICalLink(
+                Handball4All.getGameReportUrl(this).toURI().toString(),
+                LinkRelationType.RELATED,
+                "application/pdf",
+                "Game Report",
+                "Report",
+                "de-DE"
+            )
+        )
+        description.append("Report: ${Handball4All.getGameReportUrl(this)}\n")
+    }
+    if (live && token.isNotBlank()) {
+        links.add(
+            ICalLink(
+                Handball4All.getLiveTickerUrl(this).toURI().toString(),
+                LinkRelationType.CUSTOM,
+                "text/html",
+                "Live Ticker",
+                "Ticker",
+                "de-DE"
+            )
+        )
+        description.append("Live Ticker: ${Handball4All.getLiveTickerUrl(this)}\n")
+    }
+
     return ICalEvent(
         uid,
         ICalEvent.generateImportId(uid, null),
@@ -71,6 +101,7 @@ fun Game.toICalEvent(duration: Duration = 1.hours, prefix: String, suffix: Strin
         Transparency.OPAQUE,
         null,
         locations = if (location != null) listOf(location) else emptyList(),
-        rawProperties = emptyMap()
+        rawProperties = emptyMap(),
+        links = links,
     )
 }
