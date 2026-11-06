@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.github.MH321Productions.Handball4AllApi"
-version = "1.0.0"
+version = "1.1.3"
 
 dependencies {
     implementation(project(":api"))
